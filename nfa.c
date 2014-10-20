@@ -36,13 +36,6 @@ int __get_qtd_linhas(FILE *fp){
    return __contador_linha; 
 }
 
-
-int* buscarEstadoFinal(){
-    int *p = (int*) malloc(2*sizeof(int));
-    int s[4];
-   return p;
-}
-
 void listVectorEstados(Automato estado[],int qtd_linhas){
       int linha;
       printf("entrou aqui\n");
@@ -70,14 +63,6 @@ Automato* getEstados(char mat_estado[][6],int qtd_linhas){
           contador++;
     }
 
-      // estado[contador] = mat_estado[]
-
-  /*for(linha = 0 ; linha < qtd_linhas ; linha++){
-     for(col = 0; col < 6 ; col++){
-          printf("%c ",mat_estado[linha][col]);
-       }
-      printf("\n");
-  } */
    
     return estado;
 }
@@ -98,7 +83,7 @@ int compara_estado(Automato estado[],int qtd_linhas, char *validation){
 }
 
 int setEstadoInicial( Automato estado[] ,int qtd_linhas ){
-int linha=0;
+ int linha=0;
   for(linha =0 ; linha < qtd_linhas; linha++){
         printf("%s\n", estado[linha].estado );
 
@@ -147,37 +132,6 @@ int setEstadoFinal(Automato estado[] ,int qtd_linhas )
     
 }
 
-void setFilhos(char mat_estado[][6], Automato automato[] ,int qtd_linhas){  
-  
-  int linha;
-  int col;
-  int contador=0;
-  int indici;
-
-  char val[3];
-
-    for(linha = 0 ; linha < qtd_linhas ; linha++){
-           
-        //   printf("%c%c\n",mat_estado[linha][0], mat_estado[linha][1]);   
-            automato[contador].ponteiro_estado= (Automato*)malloc(3*sizeof(Automato));
-            val[0] = mat_estado[linha][2];
-            val[1] = mat_estado[linha][3];
-             printf("char em 0 ==> %s\n", val);
-            indici = compara_estado(automato,qtd_linhas,val);
-            if(indici == -1 ) printf("errro\n");     
-            automato[contador].ponteiro_estado[LENDO_0] = automato[indici];
-
-            val[0] = mat_estado[linha][4];
-            val[1] = mat_estado[linha][5];
-             printf("char em 1 ==> %s\n", val);
-            indici = compara_estado(automato,qtd_linhas,val);
-             if(indici == -1 ) printf("errro\n");
-            automato[contador].ponteiro_estado[LENDO_1] =automato[indici];
-
-            
-            contador++;
-    }
-}
 int validationAutomato(char c , Automato estado[] ,int qtd_linhas ){
 
   printf("Validando ++++=> %c\n",c  );
@@ -345,7 +299,6 @@ main(){
 FILE *fp;
 FILE *fp1;
 char c;
-char vector[90];
 int cont=0;
 int contador=0;
 
@@ -359,25 +312,49 @@ char Linha[100];
 int aux = 0;
 int qtd_linhas = __get_qtd_linhas(fp);
 rewind(fp);
-char mat_estado[qtd_linhas][10];
-
 //passar dados para um vector
 int linha=0;
 int col=0;
 char s[3],s0[qtd_linhas+8], s1[qtd_linhas+8] , s2[qtd_linhas+8] , s3[qtd_linhas+8];
  printf("quantida=>%d\n", qtd_linhas);
  Automato automato[qtd_linhas-1];
-    while( (fscanf(fp,"%s %s %s %s", s , s0 , s1 , s2 ))!=EOF ){
-        
+    while( (fscanf(fp,"%s %s %s %s", s , s0 , s1 , s2 ))!=EOF ){        
        // printf("%s\t\t\t\t%s\t\t\t\t%s\t\t\t\t\t%s\n", s, s0 ,s1 , s2 );          
-         setEstados(s,s0,s1,s2,automato);  
-
-      
+         setEstados(s,s0,s1,s2,automato);     
     }
 
     listVectorEstados(automato,qtd_linhas-1);
     setEstadoInicial(automato,qtd_linhas);
     setEstadoFinal(automato,qtd_linhas);
+    int val;
+     while((c = getc(fp1) ) != EOF){     
+          
+             printf("%c\n",c );
+              if(c == '\n'){
+                  val =  validationAutomato('2', automato, qtd_linhas);
+                  if(val == 1){
+                     printf("AUTOMATO ACEITO\n");
+                  }else if(val == 2){
+                     printf("AUTOMATO NAO ACEITO\n");
+                  }
+                   __dfa = __dfa_inicio;
+              }
+              if(c == '0'){
+
+                 validationAutomato('0', automato, qtd_linhas);
+                  
+              }
+
+              if(c == '1'){
+                  validationAutomato('1', automato, qtd_linhas);
+              }
+            
+            
+           
+         ///vector[contador] = c;
+          
+          
+    }
 
 fclose(fp);
 return 0;
