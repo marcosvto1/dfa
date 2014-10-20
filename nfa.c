@@ -23,7 +23,7 @@ Automato __dfa_inicio;
 Automato __dfa;
 int __contador_estado_final=0;
 int __estado_dual=0;
-int aux_cont = 0;
+int __aux_cont = 0;
 
 int __get_qtd_linhas(FILE *fp){
    char c;
@@ -46,12 +46,11 @@ int* buscarEstadoFinal(){
 void listVectorEstados(Automato estado[],int qtd_linhas){
       int linha;
       printf("entrou aqui\n");
-     for(linha = 0 ; linha < qtd_linhas ; linha++){
+      int j=0;
+     for(linha = 0 ; linha < qtd_linhas +1; linha++){
  
-           printf("%s\n",estado[linha].estado);  
-           printf(" Filho 0 \t%s\n ",estado[linha].ponteiro_estado[LENDO_0].estado); 
-           printf("Filho 1 \t%s\n ",estado[linha].ponteiro_estado[LENDO_1].estado); 
-           printf("tipo estado  \t%d\n ",estado[linha].tipo_estado);
+           printf("%s\n",estado[linha].estado);
+          
      }
 }
 
@@ -98,140 +97,52 @@ int compara_estado(Automato estado[],int qtd_linhas, char *validation){
   return -1;
 }
 
-int setEstadoInicial(FILE *fp , Automato estado[] ,int qtd_linhas ){
-      int linha=0;
-int col=0;
-int aux= 0;
-int contador=0;
-int vector[6*qtd_linhas];
-char c;
+int setEstadoInicial( Automato estado[] ,int qtd_linhas ){
+int linha=0;
+  for(linha =0 ; linha < qtd_linhas; linha++){
+        printf("%s\n", estado[linha].estado );
 
- rewind(fp);
-    while((c = getc(fp) ) != EOF){ 
-
-        if(aux > 6){
-          if(c != '\t' && c!='\n'){
-            vector[contador]= c;
-            contador++;
-          }
-        }
-        aux++;     
-    }
-int indici;
-char validation[2];
-  for(linha =0 ; linha < contador; linha++){
-        printf("%c\n", vector[linha] );
-
-       if(vector[linha]  == '>' && vector[linha+1] == '*'){
+       if(estado[linha].estado[0]  == '>' && estado[linha].estado[1] == '*'){
+           printf("encontrou estado inicial e final mesmo tempo => %s\n", estado[linha].estado );   
             __estado_dual = 1;
-            //__contador_estado_final++;
-             printf("encontrou estado inicial e final mesmo tempo\n" );
-             validation[0] = vector[linha+2];
-             validation[1] = vector[linha+3];
-              indici = compara_estado(estado,qtd_linhas,validation);
-             if(indici != -1 ){
-                 
-                 estado[indici].tipo_estado = DUAL_ESTADO;
-                 printf("esta %s\n",estado[indici].estado);
- 
-             }
-
-             __dfa_inicio = estado[indici];
-              printf("opa ->%s\n",__dfa_inicio.estado);
+            estado[linha].tipo_estado = DUAL_ESTADO;       
              return 1;
-             break;
-             
+             break;      
 
-       }else if(vector[linha]  == '>'){
-               printf("encontrou estado inicial\n" );  
-             validation[1] = vector[linha+2];
-             validation[0] = vector[linha+3];
-             indici = compara_estado(estado,qtd_linhas,validation);
-             printf("indic %d\n",indici );
-             if(indici != -1 ){
-                 
-                 estado[indici].tipo_estado = INICIAL;
-                  __dfa_inicio = estado[indici];
-                 printf("opa ->%s\n",__dfa_inicio.estado);
-
-             }
+       }else if(estado[linha].estado[0]  == '>'){   
+           printf("encontrou estado inicial =:> %s\n", estado[linha].estado);     
+                 estado[linha].tipo_estado = INICIAL;
+               //   __dfa_inicio = estado[indici];             
              return 1;
-             break;
-             
-       }
-      
-
-  }
- 
+             break;             
+       } 
+  } 
   return 0;    
     
 }
 
-int setEstadoFinal(FILE *fp , Automato estado[] ,int qtd_linhas ){
-int linha=0;
-int col=0;
-int aux= 0;
-int contador=0;
-int vector[6*qtd_linhas];
-char c;
-
-
- rewind(fp);
-    while((c = getc(fp) ) != EOF){ 
-
-        if(aux > 6){
-          if(c != '\t' && c!='\n'){
-            vector[contador]= c;
-            contador++;
-          }
-        }
-        aux++;     
-    }
- int i;
-for(i=0; i<contador;i++){
-
-   printf("potaa ->%c\n",vector[i]);
-}     
-int indici;
-
-__fpurge(stdin);
-  for(linha =0 ; linha < contador; linha++){
-        printf("%c\n", vector[linha] );  
-      // linha == 0 ? linha : (linha = linha+3);
-       if(vector[linha] == '*'){
-             printf("encontrou estado inicial e final mesmo tempo\n" );
-             //vali[1] = vector[linha+2];
-             //vali[0] = vector[linha+3];
-             
-             if(vector[linha+1] == 'q' && vector[linha+2] =='1'){
-              char *vali;
-               vali = (char*)malloc(2*sizeof(char));                
-                vali[0] = vector[linha+1];
-                vali[1] = vector[linha+2];
-                
-                  indici = compara_estado(estado,qtd_linhas,vali);
-             } 
-           
-             //printf(" achando estado final %s\n", vali );
-             // indici = compara_estado(estado,qtd_linhas,vali);
-              printf(" achando estado final -> indici %d\n", indici );
-             if(indici != -1 ){                 
-                 if(estado[indici].tipo_estado == DUAL_ESTADO){
+int setEstadoFinal(Automato estado[] ,int qtd_linhas )
+{
+  int linha=0;
+  int col=0;
+  for(linha =0 ; linha < qtd_linhas; linha++){
+        printf("%s\n", estado[linha].estado );     
+       if(estado[linha].estado[0]  == '*'){
+             printf("encontrou estado final =:> %s\n", estado[linha].estado );        
+                           
+                 if(estado[linha].tipo_estado == DUAL_ESTADO){
                    continue;
                  }else{
-                   estado[indici].tipo_estado = FINAL;
-                 }
- 
-             }
-             __contador_estado_final++;
-        }  
-  }
+                   estado[linha].tipo_estado = FINAL;
+                   __contador_estado_final++;
+                 } 
+         }             
+  }   
 
   if(__contador_estado_final >= 1){
     printf("QUANTIDADE DE ESTADO FINAL ->%d\n",__contador_estado_final );
     return 1;
-  }
- 
+  } 
   return 0;    
     
 }
@@ -326,7 +237,6 @@ char * defineEstados(char *s){
      //char str[(tamanho-(qtd+2))];
      char *str = (char*)malloc((tamanho-(qtd+2))*sizeof(char));
 
-
       int i;
       int contador =0;
       for(i=0; i < tamanho; i++){
@@ -345,99 +255,89 @@ char * defineEstados(char *s){
 
 void setEstados(char *s,char *s0, char *s1, char *s2 ,Automato automato[])
 {
-    //estado pai
-    automato[aux_cont].estado = s;
-    int tamanho = strlen(s1);
-    int qtd_virgula = cont_virgula(s0);
+    //estado pai------------------------------------------
+    printf("\t\t%d\n",__aux_cont );
+    int tamanho = strlen(s);
+   // int qtd_virgula = cont_virgula(s0);
+    automato[__aux_cont].estado = (char*) malloc(tamanho*sizeof(char));
+    strcpy(automato[__aux_cont].estado,s);  
+    
     char ch;
     int i = 0;
     //______________________________________________________
     //estado filhos_vazio-----------------------------------
-      printf("CONFIGURANDO ESTADOS FILHOS LENDO VAZIO do -:>%s\n",automato[aux_cont].estado );
+      printf("CONFIGURANDO ESTADOS FILHOS LENDO VAZIO do -:>%s\n",automato[__aux_cont].estado );
      
       int tam_vazio = strlen(s0);
       int cont_vazio=0;  
       int qtd_v_vazio = cont_virgula(s0); 
-      automato[aux_cont].lendo_vazio = (Automato*) malloc ((qtd_v_vazio+1)*sizeof(Automato));     
+      automato[__aux_cont].lendo_vazio = (Automato*) malloc ((qtd_v_vazio+1)*sizeof(Automato));     
       strcpy(s0,defineEstados(s0));
        for (i = 0; i < qtd_v_vazio+1; i++)
        {    
-        automato[aux_cont].lendo_vazio[i].estado = (char*)malloc(2*sizeof(char));       
-        automato[aux_cont].lendo_vazio[i].estado[0] = s0[cont_vazio]; 
-        automato[aux_cont].lendo_vazio[i].estado[1] = s0[cont_vazio+1]; 
+        automato[__aux_cont].lendo_vazio[i].estado = (char*)malloc(2*sizeof(char));       
+        automato[__aux_cont].lendo_vazio[i].estado[0] = s0[cont_vazio]; 
+        automato[__aux_cont].lendo_vazio[i].estado[1] = s0[cont_vazio+1]; 
         cont_vazio+=2;
       }
       printf(" str => %s\n",s0 );
 
       for(i=0; i< qtd_v_vazio+1;i++){
-        printf("%s\n",automato[aux_cont].lendo_vazio[i].estado);
+        printf("%s\n",automato[__aux_cont].lendo_vazio[i].estado);
       }
       scanf("%c",&ch);
     //______________________________________________________
     
     //--------- estados lendo 0-----------------------------
-      printf("CONFIGURANDO ESTADOS FILHOS LENDO 0 do -:>%s\n",automato[aux_cont].estado );
+      printf("CONFIGURANDO ESTADOS FILHOS LENDO 0 do -:>%s\n",automato[__aux_cont].estado );
       
       int tam_lendo_0 = strlen(s1);
       int cont_lendo_0=0;  
       int qtd_v_lendo_0 = cont_virgula(s1); 
-      automato[aux_cont].lendo_0 = (Automato*) malloc ((qtd_v_lendo_0+1)*sizeof(Automato));     
+      automato[__aux_cont].lendo_0 = (Automato*) malloc ((qtd_v_lendo_0+1)*sizeof(Automato));     
       strcpy(s1,defineEstados(s1));
        for (i = 0; i < qtd_v_lendo_0+1; i++)
        {    
-        automato[aux_cont].lendo_0[i].estado = (char*)malloc(2*sizeof(char));       
-        automato[aux_cont].lendo_0[i].estado[0] = s1[cont_lendo_0]; 
-        automato[aux_cont].lendo_0[i].estado[1] = s1[cont_lendo_0+1]; 
+        automato[__aux_cont].lendo_0[i].estado = (char*)malloc(2*sizeof(char));       
+        automato[__aux_cont].lendo_0[i].estado[0] = s1[cont_lendo_0]; 
+        automato[__aux_cont].lendo_0[i].estado[1] = s1[cont_lendo_0+1]; 
         cont_lendo_0+=2;
       }
       printf(" str => %s\n",s1 );
 
      for(i=0; i< qtd_v_lendo_0+1;i++){
-        printf("%s\n",automato[aux_cont].lendo_vazio[i].estado);
+        printf("%s\n",automato[__aux_cont].lendo_vazio[i].estado);
      }
       scanf("%c",&ch);
 
     //______________________________________________________
 
     //----------estados lendo 1 ----------------------------
-      printf("CONFIGURANDO ESTADOS FILHOS LENDO 1 do -:>%s\n",automato[aux_cont].estado );
+      printf("CONFIGURANDO ESTADOS FILHOS LENDO 1 do -:>%s\n",automato[__aux_cont].estado );
       
       int tam_lendo_1 = strlen(s2);
       int cont_lendo_1=0;  
       int qtd_v_lendo_1 = cont_virgula(s2); 
-      automato[aux_cont].lendo_1 = (Automato*) malloc ((qtd_v_lendo_1+1)*sizeof(Automato));     
+      automato[__aux_cont].lendo_1 = (Automato*) malloc ((qtd_v_lendo_1+1)*sizeof(Automato));     
       strcpy(s2,defineEstados(s2));
        for (i = 0; i < qtd_v_lendo_1+1; i++)
        {    
-        automato[aux_cont].lendo_1[i].estado = (char*)malloc(2*sizeof(char));       
-        automato[aux_cont].lendo_1[i].estado[0] = s2[cont_lendo_1]; 
-        automato[aux_cont].lendo_1[i].estado[1] = s2[cont_lendo_1+1]; 
+        automato[__aux_cont].lendo_1[i].estado = (char*)malloc(2*sizeof(char));       
+        automato[__aux_cont].lendo_1[i].estado[0] = s2[cont_lendo_1]; 
+        automato[__aux_cont].lendo_1[i].estado[1] = s2[cont_lendo_1+1]; 
         cont_lendo_1+=2;
       }
       printf(" str => %s\n",s2 );
 
      for(i=0; i< qtd_v_lendo_1+1;i++){
-        printf("%s\n",automato[aux_cont].lendo_1[i].estado);
+        printf("%s\n",automato[__aux_cont].lendo_1[i].estado);
      }
       scanf("%c",&ch);
 
+      __aux_cont++;
+
     //________________________________________________________
-
-   // int j = 0;
-  //  int k=0;
-   // for(j = 0 ; j < (qtd_virgula+1) ; j++){
-        
-    //     for(k = 0 ; k < tamanho ; k++){
-
-               //automato[aux_cont].ponteiro_estado[]
-     //    }
-          
-  //  }
-   
-    //printf("tamanho %d qtd_v %d  string-> %s \n", tamanho, qtd_virgula, s1);
-    //printf("%s\n", automato[aux_cont].estado );   
-    
-        
+       
     
 }
 main(){
@@ -469,22 +369,16 @@ char s[3],s0[qtd_linhas+8], s1[qtd_linhas+8] , s2[qtd_linhas+8] , s3[qtd_linhas+
  Automato automato[qtd_linhas-1];
     while( (fscanf(fp,"%s %s %s %s", s , s0 , s1 , s2 ))!=EOF ){
         
-       // printf("%s\t\t\t\t%s\t\t\t\t%s\t\t\t\t\t%s\n", s, s0 ,s1 , s2 );
-          
+       // printf("%s\t\t\t\t%s\t\t\t\t%s\t\t\t\t\t%s\n", s, s0 ,s1 , s2 );          
          setEstados(s,s0,s1,s2,automato);  
 
-            /*int p = sizeof(s);
-            printf("%s\n",s );
-
-            automato[col].estado = (char*)malloc(p*sizeof(char));           
-            strcpy(ch1,s);
-            printf("contador-> %d\n",col );
-            col++;*/
-                        //printf("%s\t\t\t%s\t\t\t\t\t%s\n", s, s1 , s2 );
       
     }
 
-//printf("linhas %d\n", col );
+    listVectorEstados(automato,qtd_linhas-1);
+    setEstadoInicial(automato,qtd_linhas);
+    setEstadoFinal(automato,qtd_linhas);
+
 fclose(fp);
 return 0;
 
