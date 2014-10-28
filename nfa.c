@@ -150,6 +150,7 @@ int validationAutomato(char c , Automato estado[] ,int qtd_linhas ){
     printf("entrando com estado -->%s\n",__dfa.estado);
     if(c=='0'){
       printf("entro aqui em validation 000\n" );
+        //__dfa.estadp
        indici = compara_estado(estado, qtd_linhas,__dfa.estado);
        if(indici == -1){
          printf("erro\n");
@@ -327,7 +328,7 @@ char s[3],s0[qtd_linhas+8], s1[qtd_linhas+8] , s2[qtd_linhas+8] , s3[qtd_linhas+
     setEstadoInicial(automato,qtd_linhas);
     setEstadoFinal(automato,qtd_linhas);
     int val;
-     while((c = getc(fp1) ) != EOF){     
+    /* while((c = getc(fp1) ) != EOF){     
           
              printf("%c\n",c );
               if(c == '\n'){
@@ -354,7 +355,7 @@ char s[3],s0[qtd_linhas+8], s1[qtd_linhas+8] , s2[qtd_linhas+8] , s3[qtd_linhas+
          ///vector[contador] = c;
           
           
-    }
+    }*/
 
 fclose(fp);
 return 0;

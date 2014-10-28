@@ -8,6 +8,7 @@
 #define NFINAL 2
 #define DUAL_ESTADO 3
 
+//struct automato
 struct Auto{       
        char *estado;
        int tipo_estado;      
@@ -21,6 +22,8 @@ int __contador_estado_final=0;
 int __estado_dual=0;
 int __tam_col=0;
 
+
+//function que retorna a quantidade linhas do arquivo
 int __get_qtd_linhas(FILE *fp){
    char c;
    int __contador_linha=0;
@@ -33,32 +36,27 @@ int __get_qtd_linhas(FILE *fp){
 }
 
 
-int* buscarEstadoFinal(){
-    int *p = (int*) malloc(2*sizeof(int));
-    int s[4];
-   return p;
-}
-
+//function para mostrar os vector de estados
 void listVectorEstados(Automato estado[],int qtd_linhas){
       int linha;
-      printf("entrou aqui\n");
+      //printf("entrou aqui\n");
      for(linha = 0 ; linha < qtd_linhas ; linha++){
  
-           printf(" estaddo ->%s\n",estado[linha].estado);  
+          printf(" estaddo ->%s\n",estado[linha].estado);  
 
           // printf(" Filho 0 \t%s\n ",estado[linha].ponteiro_estado[LENDO_0].estado); 
          //  printf("Filho 1 \t%s\n ",estado[linha].ponteiro_estado[LENDO_1].estado); 
-           printf("tipo estado  \t%d\n ",estado[linha].tipo_estado);
+          // printf("tipo estado  \t%d\n ",estado[linha].tipo_estado);
      }
 }
-
+//function return um ponteiro de estados
 Automato* getEstados(char mat_estado[][__tam_col],int qtd_linhas){
    Automato *estado;
    estado = (Automato*)malloc(qtd_linhas*sizeof(Automato));
   int linha;
   int col;
   int contador=0;
-
+  printf("\nEstados \n");
     for(linha = 0 ; linha < qtd_linhas ; linha++){
            
            printf("%c%c\n",mat_estado[linha][0], mat_estado[linha][1]);   
@@ -70,15 +68,15 @@ Automato* getEstados(char mat_estado[][__tam_col],int qtd_linhas){
    
     return estado;
 }
-
+//function que verifica se exite um estado no  vector de estados
 int compara_estado(Automato estado[],int qtd_linhas, char *validation){
   int i;
-    printf("validation ->%s\n",validation );
+   // printf("validation ->%s\n",validation );
 
      for(i=0; i< qtd_linhas; i++){
          
            if(strcasecmp(validation, estado[i].estado) == 0){
-                 printf("entrou aqui na compara_estado %d\n", i);
+                // printf("entrou aqui na compara_estado %d\n", i);
                  return i;
                  break;
            }
@@ -86,7 +84,7 @@ int compara_estado(Automato estado[],int qtd_linhas, char *validation){
      }
   return -1;
 }
-
+//function que identifica os estados inicias
 int setEstadoInicial(FILE *fp , Automato estado[] ,int qtd_linhas ){
       int linha=0;
 int col=0;
@@ -98,7 +96,7 @@ char c;
  rewind(fp);
     while((c = getc(fp) ) != EOF){ 
 
-        if(aux > __tam_col+2){
+        if(aux > __tam_col){
           if(c != '\t' && c!='\n' && c!= ' '){
             vector[contador]= c;
             counter_realloc++;
@@ -112,7 +110,7 @@ char c;
 int indici;
 char validation[2];
   for(linha =0 ; linha < contador; linha++){
-        printf("%c\n", vector[linha] );
+       printf("vector inical ->%c\n", vector[linha] );
 
        if(vector[linha]  == '>' && vector[linha+1] == '*'){
             __estado_dual = 1;
@@ -124,18 +122,18 @@ char validation[2];
              if(indici != -1 ){
                  
                  estado[indici].tipo_estado = DUAL_ESTADO;
-                 printf("DUAL_ESTADO -> %s\n",estado[indici].estado);
+                 //printf("DUAL_ESTADO -> %s\n",estado[indici].estado);
  
              }
 
              __dfa_inicio = estado[indici];
-              printf("Estado INICIAL ->%s\n",__dfa_inicio.estado);
+             // printf("Estado INICIAL ->%s\n",__dfa_inicio.estado);
              return 1;
              break;
              
 
        }else if(vector[linha]  == '>' && vector[linha+1] != '*'){
-               printf("encontrou estado inicial\n" );  
+              /// printf("encontrou estado inicial\n" );  
              validation[1] = vector[linha+2];
              validation[0] = vector[linha+3];
              indici = compara_estado(estado,qtd_linhas,validation);
@@ -144,7 +142,7 @@ char validation[2];
                  
                  estado[indici].tipo_estado = INICIAL;
                   __dfa_inicio = estado[indici];
-                 printf("opa ->%s\n",__dfa_inicio.estado);
+                // printf("opa ->%s\n",__dfa_inicio.estado);
 
              }
              return 1;
@@ -159,8 +157,9 @@ char validation[2];
     
 }
 
+//function que identifica os estados finais
 int setEstadoFinal(FILE *fp , Automato estado[] ,int qtd_linhas ){
-  printf("Encontrando Estado Final \n");
+  //printf("Encontrando Estado Final \n");
 int linha=0;
 int col=0;
 int aux= 0;
@@ -170,7 +169,7 @@ int counter_realloc = 1;
 char c;
  rewind(fp);
     while((c = getc(fp) ) != EOF){
-        if(aux > __tam_col+2){
+        if(aux > __tam_col){
           if(c != '\t' && c!='\n'){
             vector[contador]= c;
             counter_realloc++;
@@ -182,12 +181,12 @@ char c;
     }
   int p = 0 ;
    
- printf("tamnaho vector =: %d\n", strlen(vector));
+// printf("tamnaho vector =: %d\n", strlen(vector));
 int indici=0;
   for(linha =0 ; linha < contador; linha++){
-        printf("%c\n", vector[linha] );        
+       // printf("%c\n", vector[linha] );        
        if(vector[linha] == '*'){
-             printf("Encoutrou estado final " );            
+            // printf("Encoutrou estado final " );            
              if(vector[linha+1] == 'q'){
                char *vali;
                 vali = (char*)malloc(2*sizeof(char));                
@@ -195,10 +194,10 @@ int indici=0;
                 vali[1] = vector[linha+2];                
                  indici = compara_estado(estado,qtd_linhas,vali);
              }      
-              printf(" position stats final-> %d\n", indici );
+              //printf(" position stats final-> %d\n", indici );
              if(indici != -1 ){                 
                  if(estado[indici].tipo_estado == DUAL_ESTADO){
-                   printf("Encontrou estado Dual =:> %s",estado[indici].estado);continue;
+                   //printf("Encontrou estado Dual =:> %s",estado[indici].estado);continue;
                  }else{
                    estado[indici].tipo_estado = FINAL;
                  }
@@ -209,7 +208,7 @@ int indici=0;
   }
 
   if(__contador_estado_final >= 1){
-    printf("QUANTIDADE DE ESTADO FINAL ->%d\n",__contador_estado_final );
+    //printf("QUANTIDADE DE ESTADO FINAL ->%d\n",__contador_estado_final );
     return 1;
   }
  
@@ -217,6 +216,7 @@ int indici=0;
     
 }
 
+//function para configurar os estados de ligaçao a cada estado
 void setFilhos(char mat_estado[][__tam_col], Automato automato[] ,int qtd_linhas, int tam_leitura){  
   
   int linha;
@@ -229,11 +229,11 @@ void setFilhos(char mat_estado[][__tam_col], Automato automato[] ,int qtd_linhas
    int k;
     for(linha = 0 ; linha < qtd_linhas ; linha++){
        automato[contador].ponteiro_estado= (Automato*)malloc(tam_leitura*sizeof(Automato));
-       printf("Automato Pai -> %s\n", automato[contador].estado);
+      // printf("Automato Pai -> %s\n", automato[contador].estado);
         for(j=2 ; j< __tam_col; j+=2){
-          printf("Automato -> %s | Filho -> %d \n", automato[contador].estado, cont_tam_leitura);
+         // printf("Automato -> %s | Filho -> %d \n", automato[contador].estado, cont_tam_leitura);
             if(cont_tam_leitura != tam_leitura){
-             
+              // automato[contador].ponteiro_estado[cont_tam_leitura].estado = (char*)realloc(automato[contador].ponteiro_estado[cont_tam_leitura].estado,2*sizeof(char));
                for(k = 0 ;  k < 1; k++){    
                 val = (char*)malloc(2*sizeof(char));  
                 val[0] = mat_estado[linha][j];
@@ -241,8 +241,10 @@ void setFilhos(char mat_estado[][__tam_col], Automato automato[] ,int qtd_linhas
                 if(!strcasecmp(val, "--") == 0){                 
                  indici = compara_estado(automato,qtd_linhas,val);
                  automato[contador].ponteiro_estado[cont_tam_leitura] = automato[indici]; 
-                  printf("Automato Filho =>%s \n", automato[contador].ponteiro_estado[cont_tam_leitura].estado );
-                }           
+                 // printf("Automato Filho =>%s \n", automato[contador].ponteiro_estado[cont_tam_leitura].estado );
+                }   
+               // automato[contador].ponteiro_estado[cont_tam_leitura].estado[k] = mat_estado[linha][j];
+               //automato[contador].ponteiro_estado[cont_tam_leitura].estado[k+1] = mat_estado[linha][j+1];
               
                 break;
                }
@@ -255,7 +257,7 @@ void setFilhos(char mat_estado[][__tam_col], Automato automato[] ,int qtd_linhas
     }   
       
 }
-
+//retorna a posição do vector de leitura dos estados
 int __getIndiciLeitura(char c ,char *vector_leitura, int tam_leitura){
    int indici = -1;  int i = 0;
   for(i; i < tam_leitura; i++){
@@ -266,13 +268,14 @@ int __getIndiciLeitura(char c ,char *vector_leitura, int tam_leitura){
   }
   return indici;
 }
+//função de validar string de teste
 int validationAutomato(char c , Automato estado[] , char *vector_leitura  , int qtd_linhas , int tam_leitura){
 
-  printf("Validando char teste => %c | %d \n",c , __dfa.tipo_estado  );
+  //printf("Validando char teste => %c | %d \n",c , __dfa.tipo_estado  );
   int indici;
   int indici_leitura;
   if(c == '2'){
-      printf("AUTOMATO DE VALIDAÇÃO =: %s | %d \n", __dfa.estado , __dfa.tipo_estado);
+   //   printf("AUTOMATO DE VALIDAÇÃO =: %s | %d \n", __dfa.estado , __dfa.tipo_estado);
       if(__dfa.tipo_estado == FINAL || __dfa.tipo_estado == DUAL_ESTADO){
 
          return 1;
@@ -288,17 +291,17 @@ int validationAutomato(char c , Automato estado[] , char *vector_leitura  , int 
      exit(1);
    }
 
-    printf("Automato ->%s\n",__dfa.estado);
+   // printf("Automato ->%s\n",__dfa.estado);
     if(c == vector_leitura[indici_leitura] ){     
        indici = compara_estado(estado, qtd_linhas,__dfa.estado);
        if(indici == -1){
-         printf("erro\n");
+        printf("erro\n");
        }
-       printf("indici e estado ->%d , %s\n", indici , estado[indici].ponteiro_estado[indici_leitura].estado);
+     //  printf("indici e estado ->%d , %s\n", indici , estado[indici].ponteiro_estado[indici_leitura].estado);
        __dfa = estado[indici].ponteiro_estado[indici_leitura];
-        printf("saiu \n" );
+     //  printf("saiu \n" );
     }else{
-        printf("ARQUIVO DE TESTE INVALIDO , REVEJA SEU ARQUIVO E TENTE NOVAMENTE\n");
+       // printf("ARQUIVO DE TESTE INVALIDO , REVEJA SEU ARQUIVO E TENTE NOVAMENTE\n");
         exit(1);
     }
 
@@ -316,7 +319,7 @@ char * __getLeituraEstados(FILE *fp){
             break;
           }
           else if(c != '\t'){  
-            printf("%c\n",c );           
+           // printf("%c\n",c );           
             counter_realloc++;
             str = (char*)realloc(str,counter_realloc*sizeof(char));
             if(!str){printf("Error\n"); exit(1);} 
@@ -325,7 +328,7 @@ char * __getLeituraEstados(FILE *fp){
           }
     }
     
-    printf("contador -:%d\n",contador );  
+    //printf("contador -:%d\n",contador );  
     int i = 0;    
     //printf("%s\n", str);   
     
@@ -337,23 +340,35 @@ FILE *fp;
 FILE *fp1;
 char c;
 char vector[90];
-
-
-
 int cont=0;
 int contador=0;
-fp = fopen("arquivo.txt","r");   /* Arquivo ASCII, para leitura */
+fp = fopen("ex_dfa02.txt","r");   /* Arquivo ASCII, para leitura */
 if(!fp)
 {
     printf( "Erro na abertura do arquivo");
     exit(0);
 }
+
+printf("---------------\t\tInstruções para o uso\t\t-----------------\n");
+puts("\n* - Os scripts que simulam os automatos foram desenvolvidos em C \n  e testados com arquivos txt(Ubuntu),\n  não é garantido que seja funcional com arquivos txt \n  de outro sistema operacional.\n");
+puts("* - Para que o automato seja simulado, deve-se criar dois arquivos,\n  sendo que o primeiro deve conter a tabela de transições do automato\n  e o segundo deve conter as strings a serem verificadas\n ");
+puts("* - Só serão aceitos arquivos em txt.\n");
+puts("* - Certifica que os arquivos txt esteja na mesma pasta do programa txt.\n");
+puts("* - Na tabela de transições, a separação de colunas deve ser feita com tab(barra t)\n");
+puts("* - Na tabela de transições todas as linhas devem ser finalizadas com ENTER(barra n)\n");
+puts("* - No arquivo que contem a entrada, todas as strings devem ser separadas com ENTER(barra n)\n");
+printf("-------------------------------------------------------------\n");
+printf("< y > PARA CONTINUAR < n > - PARA FINALIZAR :: ");
+char ch = getchar();
+if(ch == 'n'){
+ exit(1);
+}else if(ch == 'y'){
 char Linha[100];
 int aux = 0;
-int qtd_linhas = __get_qtd_linhas(fp);
+int qtd_linhas = __get_qtd_linhas(fp); // pegando numero de linhas existente no arquivo
 rewind(fp);
-char *vector_leitura = __getLeituraEstados(fp);
-printf("%s\n",vector_leitura);
+char *vector_leitura = __getLeituraEstados(fp); //pegando a linha de leitura de estados
+printf("\n\nleitura -> %s",vector_leitura);
 Automato *automato;
 int tam_leitura = strlen(vector_leitura);
 int tam_vector = (strlen(vector_leitura)*2); 
@@ -365,10 +380,11 @@ rewind(fp);
 int linha=0;
 int col=0;
 
+//mapeando arquivo em uma matriz
 for(linha = 0 ; linha < qtd_linhas ; linha++){
     for(col = 0; col < __tam_col; col++){
        while((c = getc(fp) ) != EOF){ 
-        if(aux > __tam_col+2){
+        if(aux > __tam_col){
           if(c != '\t' && c!='\n' && c != '>' && c!= '*'){
             mat_estado[linha][col] = c;
             contador++;
@@ -385,18 +401,21 @@ for(linha = 0 ; linha < qtd_linhas ; linha++){
 for(linha = 0 ; linha < qtd_linhas ; linha++){
     for(col = 2; col < __tam_col ; col++){  
 
-            printf("%c",mat_estado[linha][col]);
+          printf("%c",mat_estado[linha][col]);
          
           }
           printf("\n");
-}
+} 
+  //configurando vector de estados        
+ automato = getEstados(mat_estado,qtd_linhas); 
+ listVectorEstados(automato,qtd_linhas); 
 
- 
- automato = getEstados(mat_estado,qtd_linhas);
- listVectorEstados(automato,qtd_linhas);      
+ //configurando os estado iniciais e estados finais
  int validationInicial = setEstadoInicial(fp ,automato , qtd_linhas );
  int validationFinal = setEstadoFinal(fp, automato, qtd_linhas);
- listVectorEstados(automato,qtd_linhas);
+ //listVectorEstados(automato,qtd_linhas);
+
+ //configurando os estados de ligaçao
  setFilhos(mat_estado,automato,qtd_linhas, tam_leitura);
        //listVectorEstados(automato,qtd_linhas);
     if(validationInicial==0){
@@ -418,32 +437,35 @@ if(!fp1)
     exit(0);
 }
 
+//validando a string de teste
 char c1;
 int val;
  __dfa = __dfa_inicio;
- printf("\t\tLENDO ARQUVO DE TESTE!!!!!\n\n Automato INICIAL =>%s | %d\n\n",__dfa.estado , __dfa.tipo_estado);
-
+ //printf("\t\tLENDO ARQUVO DE TESTE!!!!!\n\n Automato INICIAL =>%s | %d\n\n",__dfa.estado , __dfa.tipo_estado);
+printf("\nVALIDAÇÃO\n\n");
  while((c1 = getc(fp1) ) != EOF){       
           
-             printf("CARACTER =: %c\n",c1 );
+            // printf("%c\n",c1 );
               if(c1 == '\n'){
                   val =  validationAutomato('2', automato, vector_leitura, qtd_linhas, tam_leitura);
                   if(val == 1){
-                     printf("AUTOMATO ACEITO\n");
+                     printf("string ACEITA\n");
                   }else if(val == 2){
-                     printf("AUTOMATO NAO ACEITO\n");
+                     printf("string NAO ACEITA\n");
                   }
                    __dfa = __dfa_inicio;
-              }else{             
+              }else{     
 
                   validationAutomato(c1, automato, vector_leitura, qtd_linhas, tam_leitura);
                   
               }          
-    }
-    
+    }   
 
 fclose(fp1);
 fclose(fp);
 return 0;
+}else{
 
+  printf("Opcao invalida!!\n");
+}
 }
