@@ -233,7 +233,7 @@ void setFilhos(char mat_estado[][__tam_col], Automato automato[] ,int qtd_linhas
         for(j=2 ; j< __tam_col; j+=2){
           printf("Automato -> %s | Filho -> %d \n", automato[contador].estado, cont_tam_leitura);
             if(cont_tam_leitura != tam_leitura){
-              // automato[contador].ponteiro_estado[cont_tam_leitura].estado = (char*)realloc(automato[contador].ponteiro_estado[cont_tam_leitura].estado,2*sizeof(char));
+             
                for(k = 0 ;  k < 1; k++){    
                 val = (char*)malloc(2*sizeof(char));  
                 val[0] = mat_estado[linha][j];
@@ -242,9 +242,7 @@ void setFilhos(char mat_estado[][__tam_col], Automato automato[] ,int qtd_linhas
                  indici = compara_estado(automato,qtd_linhas,val);
                  automato[contador].ponteiro_estado[cont_tam_leitura] = automato[indici]; 
                   printf("Automato Filho =>%s \n", automato[contador].ponteiro_estado[cont_tam_leitura].estado );
-                }   
-               // automato[contador].ponteiro_estado[cont_tam_leitura].estado[k] = mat_estado[linha][j];
-               //automato[contador].ponteiro_estado[cont_tam_leitura].estado[k+1] = mat_estado[linha][j+1];
+                }           
               
                 break;
                }
@@ -427,7 +425,7 @@ int val;
 
  while((c1 = getc(fp1) ) != EOF){       
           
-             printf("%c\n",c1 );
+             printf("CARACTER =: %c\n",c1 );
               if(c1 == '\n'){
                   val =  validationAutomato('2', automato, vector_leitura, qtd_linhas, tam_leitura);
                   if(val == 1){
